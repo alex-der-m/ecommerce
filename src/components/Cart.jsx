@@ -1,6 +1,9 @@
 import React from "react";
+import { useCarrito } from "../context/CarritoContext";
 
-const Cart = ({ cart, removeFromCart, emptyCart }) => {
+const Cart = () => {
+  const { cart, removeFromCart, emptyCart } = useCarrito();
+
   const total = cart.reduce((acc, product) => acc + product.price * (product.quantity || 1), 0);
 
   return (
@@ -10,7 +13,7 @@ const Cart = ({ cart, removeFromCart, emptyCart }) => {
       </div>
       <div className="cart-content">
         {cart.length === 0 ? (
-        <p style={{ color: 'red' }}>El carrito está vacío</p>
+          <p style={{ color: 'red' }}>El carrito está vacío</p>
         ) : (
           <>
             <ul className="cart-item">

@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import ProductList from '../ProductList';
+  import { useCarrito } from '../../context/CarritoContext';
 
-const Home = ({ cart, addToCart, emptyCart }) => {
+const Home = () => {
+  const { cart, addToCart, emptyCart } = useCarrito();  
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);

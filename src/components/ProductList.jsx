@@ -26,22 +26,22 @@ const ProductList = ({ addToCart }) => {
       });
   }, []);
 
-  if (loading) return <p style={{ color: "gray" }}>Cargando productos...</p>;
-  if (error) return <p style={{ color: "red" }}>Error al cargar productos. Inténtalo más tarde.</p>;
+  if (loading) return <p className="text-center text-muted my-4">Cargando productos...</p>;
+  if (error) return <p className="text-center text-danger my-4">Error al cargar productos. Inténtalo más tarde.</p>;
 
-return (
-  <div className="container my-4">
-    <h2 className="text-center mb-4">Galería de productos</h2>
+  return (
+    <div className="container my-5">
+      <h2 className="text-center mb-4 fw-bold">Galería de productos</h2>
 
-    <div className="row">
-      {products.map((product) => (
-        <div key={product.id} className="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
-          <ProductCard product={product} addToCart={addToCart} />
-        </div>
-      ))}
+      <div className="row justify-content-center">
+        {products.map((product) => (
+          <div key={product.id} className="col-12 col-sm-6 col-md-4 col-lg-3 d-flex align-items-stretch mb-4">
+            <ProductCard product={product} addToCart={addToCart} />
+          </div>
+        ))}
+      </div>
     </div>
-  </div>
-);
+  );
 };
 
 export default ProductList;
