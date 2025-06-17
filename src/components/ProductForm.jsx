@@ -40,7 +40,6 @@ const ProductForm = ({ productToEdit = null, onFinish }) => {
     e.preventDefault();
     const validationErrors = validate();
     setErrors(validationErrors);
-
     if (Object.keys(validationErrors).length > 0) return;
 
     try {
@@ -58,7 +57,12 @@ const ProductForm = ({ productToEdit = null, onFinish }) => {
         if (onFinish) onFinish();
       }, 2000);
     } catch (error) {
-      setErrors({ general: 'Ocurrió un error al guardar el producto.' });
+      console.error('Error al guardar producto:', error);
+      const message =
+        typeof error === 'string'
+          ? error
+          : error?.message || 'Ocurrió un error al guardar el producto.';
+      setErrors({ general: message });
     }
   };
 
@@ -68,7 +72,9 @@ const ProductForm = ({ productToEdit = null, onFinish }) => {
 
   return (
     <form onSubmit={handleSubmit} className="bg-white p-4 shadow rounded">
-      {errors.general && <div className="alert alert-danger">{errors.general}</div>}
+      {typeof errors.general === 'string' && (
+        <div className="alert alert-danger">{errors.general}</div>
+      )}
       {successMessage && <div className="alert alert-success">{successMessage}</div>}
 
       <div className="mb-3">
@@ -118,7 +124,7 @@ const ProductForm = ({ productToEdit = null, onFinish }) => {
         {errors.image && <div className="invalid-feedback">{errors.image}</div>}
       </div>
 
-      <button type="submit" className="btn btn-success w-100">
+      <button type="submit" className="btn btn-success">
         {productToEdit ? 'Guardar cambios' : 'Agregar producto'}
       </button>
     </form>

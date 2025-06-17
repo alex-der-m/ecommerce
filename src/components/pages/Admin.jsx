@@ -1,8 +1,22 @@
-import React from 'react';
+import React, { useState } from 'react';
 import ProductForm from '../ProductForm';
-
+import { useProducts } from '../../context/ProductsContext';
 
 const Admin = () => {
+  const { products, deleteProduct } = useProducts();
+  const [editingProduct, setEditingProduct] = useState(null);
+
+  const handleDelete = async (id) => {
+    if (window.confirm('¿Estás seguro de eliminar este producto?')) {
+      try {
+        await deleteProduct(id);
+        alert('Producto eliminado correctamente');
+      } catch (error) {
+        alert('Error al eliminar el producto');
+      }
+    }
+  };
+
   return (
     <div className="container py-5">
       <div className="bg-light p-4 rounded shadow-sm">
@@ -12,34 +26,58 @@ const Admin = () => {
         </p>
 
         <div className="mt-5 mb-4">
-          <h4 className="mb-3">Agregar nuevo producto</h4>
-          <ProductForm />
+          <h4 className="mb-3">{editingProduct ? 'Editar producto' : 'Agregar nuevo producto'}</h4>
+          <ProductForm
+            productToEdit={editingProduct}
+            onFinish={() => setEditingProduct(null)}
+          />
         </div>
 
-        <div className="row mt-5">
-          <div className="col-md-6 mb-3">
-            <div className="card shadow-sm">
-              <div className="card-body text-center">
-                <h5 className="card-title">Gestión de Cursos</h5>
-                <p className="card-text">Agregar, editar o eliminar cursos.</p>
-                <button className="btn btn-primary" disabled>
-                  Próximamente
-                </button>
-              </div>
-            </div>
-          </div>
+        <hr className="my-5" />
 
-          <div className="col-md-6 mb-3">
-            <div className="card shadow-sm">
-              <div className="card-body text-center">
-                <h5 className="card-title">Pedidos</h5>
-                <p className="card-text">Ver pedidos realizados por los usuarios.</p>
-                <button className="btn btn-primary" disabled>
-                  Próximamente
-                </button>
-              </div>
-            </div>
-          </div>
+        <h4>Productos actuales</h4>
+        <div className="table-responsive">
+          <table className="table table-bordered mt-3">
+            <thead>
+              <tr>
+                <th>Nombre</th>
+                <th>Precio</th>
+                <th>Descripción</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              {products.length > 0 ? (
+                products.map((prod) => (
+                  <tr key={prod.id}>
+                    <td>{prod.name}</td>
+                    <td>${prod.price}</td>
+                    <td>{prod.description}</td>
+                    <td>
+                      <button
+                        className="btn btn-sm btn-warning me-2"
+                        onClick={() => setEditingProduct(prod)}
+                      >
+                        Editar
+                      </button>
+                      <button
+                        className="btn btn-sm btn-danger"
+                        onClick={() => handleDelete(prod.id)}
+                      >
+                        Eliminar
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="4" className="text-center text-muted">
+                    No hay productos cargados.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
         </div>
 
         <p className="text-center text-muted mt-5" style={{ fontSize: '0.9rem' }}>

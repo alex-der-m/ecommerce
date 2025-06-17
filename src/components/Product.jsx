@@ -1,11 +1,27 @@
 import React from 'react';
 import { useCarrito } from '../context/CarritoContext';
+import { FaCartPlus } from 'react-icons/fa';
+import { toast } from 'react-toastify';
 
 const ProductCard = ({ product }) => {
-  const { addToCart } = useCarrito();
+  const { addToCart, cart } = useCarrito();
+
+  const handleAddToCart = () => {
+    const existingProduct = cart.find(p => p.id === product.id);
+    addToCart(product);
+    if (existingProduct) {
+      toast.info(`${product.name} ya está en el carrito. Se aumentó la cantidad.`, {
+        icon: '🛒'
+      });
+    } else {
+      toast.success(`${product.name} agregado al carrito.`, {
+        icon: '✅'
+      });
+    }
+  };
 
   return (
-    <div className="card mb-3" style={{ minHeight: '100%' }}>
+    <div className="card mb-3 shadow-sm" style={{ minHeight: '100%' }}>
       <img
         src={product.image}
         className="card-img-top"
@@ -20,10 +36,11 @@ const ProductCard = ({ product }) => {
         <div className="d-flex justify-content-between align-items-center mt-3">
           <span className="fw-bold text-primary">${product.price}</span>
           <button
-            onClick={() => addToCart(product)}
-            className="btn btn-outline-primary btn-sm"
+            onClick={handleAddToCart}
+            className="btn btn-outline-primary btn-sm d-flex align-items-center"
           >
-            Agregar al carrito
+            <FaCartPlus className="me-2" />
+            Agregar
           </button>
         </div>
       </div>

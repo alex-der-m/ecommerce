@@ -7,34 +7,43 @@ const Cart = () => {
   const total = cart.reduce((acc, product) => acc + product.price * (product.quantity || 1), 0);
 
   return (
-    <div className={`cart-drawer ${cart.length > 0 ? 'open' : ''}`}>
-      <div className="cart-header">
-        <h2 style={{ color: 'black' }}>Carrito de Compras</h2>
-      </div>
-      <div className="cart-content">
-        {cart.length === 0 ? (
-          <p style={{ color: 'red' }}>El carrito está vacío</p>
-        ) : (
-          <>
-            <ul className="cart-item">
-              {cart.map((product, index) => (
-                <li key={index} style={{ color: 'black' }}>
-                  {product.name} x {product.quantity || 1} - ${product.price * (product.quantity || 1)}
-                  <button onClick={() => removeFromCart(index)}>
+    <div className="container my-4">
+      <h2 className="mb-4 text-center">🛒 Carrito de Compras</h2>
+
+      {cart.length === 0 ? (
+        <p className="text-danger text-center">El carrito está vacío</p>
+      ) : (
+        <>
+          <ul className="list-group mb-3">
+            {cart.map((product, index) => (
+              <li key={index} className="list-group-item d-flex justify-content-between align-items-center">
+                <div>
+                  <strong>{product.name}</strong> x {product.quantity || 1}
+                </div>
+                <div className="d-flex align-items-center gap-3">
+                  <span className="text-success fw-bold">
+                    ${product.price * (product.quantity || 1)}
+                  </span>
+                  <button
+                    onClick={() => removeFromCart(index)}
+                    className="btn btn-sm btn-outline-danger"
+                    aria-label={`Eliminar ${product.name}`}
+                  >
                     <i className="fa-solid fa-trash"></i>
                   </button>
-                </li>
-              ))}
-            </ul>
-            <p style={{ color: 'black' }}>
-              <strong>Total:</strong> ${total}
-            </p>
-            <button onClick={emptyCart} className="btn btn-danger mt-2">
+                </div>
+              </li>
+            ))}
+          </ul>
+
+          <div className="d-flex justify-content-between align-items-center">
+            <h4>Total: <span className="text-primary">${total}</span></h4>
+            <button onClick={emptyCart} className="btn btn-danger">
               Vaciar Carrito
             </button>
-          </>
-        )}
-      </div>
+          </div>
+        </>
+      )}
     </div>
   );
 };
