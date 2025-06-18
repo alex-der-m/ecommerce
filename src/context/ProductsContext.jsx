@@ -13,6 +13,7 @@ export const ProductsProvider = ({ children }) => {
 
   const refreshProducts = async () => {
     setLoading(true);
+    setError(null);
     try {
       const res = await axios.get(API_URL);
       setProducts(res.data);
@@ -30,7 +31,7 @@ export const ProductsProvider = ({ children }) => {
   const addProduct = async (product) => {
     try {
       const res = await axios.post(API_URL, product);
-      setProducts(prev => [...prev, res.data]);
+      setProducts((prev) => [...prev, res.data]);
     } catch {
       throw new Error('Error al agregar producto.');
     }
@@ -39,7 +40,7 @@ export const ProductsProvider = ({ children }) => {
   const editProduct = async (id, updatedProduct) => {
     try {
       const res = await axios.put(`${API_URL}/${id}`, updatedProduct);
-      setProducts(prev => prev.map(p => (p.id === id ? res.data : p)));
+      setProducts((prev) => prev.map((p) => (p.id === id ? res.data : p)));
     } catch {
       throw new Error('Error al editar producto.');
     }
@@ -48,7 +49,7 @@ export const ProductsProvider = ({ children }) => {
   const deleteProduct = async (id) => {
     try {
       await axios.delete(`${API_URL}/${id}`);
-      setProducts(prev => prev.filter(p => p.id !== id));
+      setProducts((prev) => prev.filter((p) => p.id !== id));
     } catch {
       throw new Error('Error al eliminar producto.');
     }

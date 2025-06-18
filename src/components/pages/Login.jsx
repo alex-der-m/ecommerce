@@ -17,9 +17,10 @@ const Login = () => {
     setError(null);
 
     setTimeout(() => {
-      const success = login(email, password);
-      if (success) {
-        navigate('/');
+      const user = login(email, password);
+      if (user) {
+        const destination = user.role === 'admin' ? '/admin' : '/';
+        navigate(destination);
       } else {
         setError('Credenciales incorrectas');
       }
@@ -37,28 +38,11 @@ const Login = () => {
         <form onSubmit={handleLogin}>
           <div className="mb-3">
             <label htmlFor="email" className="form-label">Correo Electrónico</label>
-            <input
-              type="email"
-              id="email"
-              className="form-control"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="usuario@ejemplo.com"
-              required
-              autoFocus
-            />
+            <input type="email" id="email" className="form-control" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="usuario@ejemplo.com" required autoFocus/>
           </div>
           <div className="mb-4">
             <label htmlFor="password" className="form-label">Contraseña</label>
-            <input
-              type="password"
-              id="password"
-              className="form-control"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••"
-              required
-            />
+            <input type="password" id="password" className="form-control" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" required/>
           </div>
           {error && <p className="text-danger">{error}</p>}
           <button type="submit" className="btn btn-primary w-100" disabled={loading}>

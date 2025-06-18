@@ -17,11 +17,15 @@ const ProductForm = ({ productToEdit = null, onFinish }) => {
   useEffect(() => {
     if (productToEdit) {
       setForm({
-        name: productToEdit.name,
-        price: productToEdit.price,
-        description: productToEdit.description,
-        image: productToEdit.image,
+        name: productToEdit.name || '',
+        price: productToEdit.price || '',
+        description: productToEdit.description || '',
+        image: productToEdit.image || '',
       });
+    } else {
+      setForm({ name: '', price: '', description: '', image: '' });
+      setErrors({});
+      setSuccessMessage('');
     }
   }, [productToEdit]);
 
@@ -55,7 +59,7 @@ const ProductForm = ({ productToEdit = null, onFinish }) => {
       setTimeout(() => {
         setSuccessMessage('');
         if (onFinish) onFinish();
-      }, 2000);
+      }, 1500);
     } catch (error) {
       console.error('Error al guardar producto:', error);
       const message =
@@ -72,9 +76,7 @@ const ProductForm = ({ productToEdit = null, onFinish }) => {
 
   return (
     <form onSubmit={handleSubmit} className="bg-white p-4 shadow rounded">
-      {typeof errors.general === 'string' && (
-        <div className="alert alert-danger">{errors.general}</div>
-      )}
+      {errors.general && <div className="alert alert-danger">{errors.general}</div>}
       {successMessage && <div className="alert alert-success">{successMessage}</div>}
 
       <div className="mb-3">
@@ -97,6 +99,8 @@ const ProductForm = ({ productToEdit = null, onFinish }) => {
           className={`form-control ${errors.price ? 'is-invalid' : ''}`}
           value={form.price}
           onChange={handleChange}
+          min="0.01"
+          step="0.01"
         />
         {errors.price && <div className="invalid-feedback">{errors.price}</div>}
       </div>
@@ -108,6 +112,7 @@ const ProductForm = ({ productToEdit = null, onFinish }) => {
           className={`form-control ${errors.description ? 'is-invalid' : ''}`}
           value={form.description}
           onChange={handleChange}
+          rows={3}
         />
         {errors.description && <div className="invalid-feedback">{errors.description}</div>}
       </div>

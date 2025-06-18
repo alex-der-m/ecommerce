@@ -1,12 +1,14 @@
 import React from 'react';
 import { useNavigate, NavLink } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 
-const Header = ({ isAuthenticated, setIsAuthenticated }) => {
+const Header = () => {
+  const { user, logout } = useAuth();
   const navigate = useNavigate();
 
   const handleAuth = () => {
-    if (isAuthenticated) {
-      setIsAuthenticated(false);
+    if (user) {
+      logout();
       navigate('/');
     } else {
       navigate('/login');
@@ -31,20 +33,22 @@ const Header = ({ isAuthenticated, setIsAuthenticated }) => {
             <li className="nav-item">
               <NavLink to="/contact" className={getNavLinkClass}>Contacto</NavLink>
             </li>
-            {isAuthenticated && (
+            {user && (
               <>
                 <li className="nav-item">
                   <NavLink to="/cart" className={getNavLinkClass}>Carrito</NavLink>
                 </li>
-                <li className="nav-item">
-                  <NavLink to="/admin" className={getNavLinkClass}>Admin</NavLink>
-                </li>
+                {user.role === 'admin' && (
+                  <li className="nav-item">
+                    <NavLink to="/admin" className={getNavLinkClass}>Admin</NavLink>
+                  </li>
+                )}
               </>
             )}
           </ul>
 
           <button onClick={handleAuth} className="btn btn-outline-light ms-auto mt-2 mt-sm-0">
-            {isAuthenticated ? 'Cerrar Sesión' : 'Iniciar Sesión'}
+            {user ? 'Cerrar Sesión' : 'Iniciar Sesión'}
           </button>
         </nav>
       </div>

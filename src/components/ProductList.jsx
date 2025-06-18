@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import ProductCard from './Product';
 import { useProducts } from '../context/ProductsContext';
 
-const ProductList = ({ addToCart }) => {
+const ProductList = () => {
   const { products, loading, error } = useProducts();
   const [search, setSearch] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
@@ -28,42 +28,40 @@ const ProductList = ({ addToCart }) => {
     <Wrapper>
       <h2 className="text-center mb-4 fw-bold">🎓 Galería de Productos</h2>
 
-<div className="mb-4 d-flex justify-content-center">
-  <div style={{ position: 'relative', width: '100%', maxWidth: '320px' }}>
-    <span
-      style={{
-        position: 'absolute',
-        left: '10px',
-        top: '50%',
-        transform: 'translateY(-50%)',
-        color: '#aaa',
-        pointerEvents: 'none',
-      }}
-    >
-      🔍
-    </span>
-    <input
-      type="text"
-      className="form-control ps-5"
-      placeholder="Buscar producto..."
-      value={search}
-      onChange={(e) => {
-        setSearch(e.target.value);
-        setCurrentPage(1);
-      }}
-    />
-</div>
+      <div className="mb-4 d-flex justify-content-center">
+        <div style={{ position: 'relative', width: '100%', maxWidth: '320px' }}>
+          <span
+            style={{
+              position: 'absolute',
+              left: '10px',
+              top: '50%',
+              transform: 'translateY(-50%)',
+              color: '#aaa',
+              pointerEvents: 'none',
+            }}
+          >
+            🔍
+          </span>
+          <input
+            type="text"
+            className="form-control ps-5"
+            placeholder="Buscar producto..."
+            value={search}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              setCurrentPage(1);
+            }}
+          />
+        </div>
+      </div>
 
-</div>
       <div className="row justify-content-center">
         {currentProducts.map((product) => (
           <div
             key={product.id}
             className="col-12 col-sm-6 col-md-4 col-lg-3 d-flex align-items-stretch mb-4"
           >
-            <CardWrapper>
-              <ProductCard product={product} addToCart={addToCart} />
-            </CardWrapper>
+            <ProductCard product={product} />
           </div>
         ))}
       </div>
@@ -92,17 +90,4 @@ export default ProductList;
 const Wrapper = styled.div`
   padding: 3rem 1rem;
   background-color: #f8f9fa;
-`;
-
-const CardWrapper = styled.div`
-  width: 100%;
-  border-radius: 12px;
-  background: #ffffff;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-  padding: 1rem;
-  transition: box-shadow 0.2s ease-in-out;
-
-  &:hover {
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
-  }
 `;

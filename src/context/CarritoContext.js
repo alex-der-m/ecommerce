@@ -12,17 +12,23 @@ export const CarritoProvider = ({ children }) => {
       const existing = prevCart.find(item => item.id === product.id);
       if (existing) {
         return prevCart.map(item =>
-          item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item
+          item.id === product.id
+            ? { ...item, quantity: item.quantity + 1 }
+            : item
         );
       }
       return [...prevCart, { ...product, quantity: 1 }];
     });
   };
 
+  const removeFromCart = (index) => {
+    setCart((prevCart) => prevCart.filter((_, i) => i !== index));
+  };
+
   const emptyCart = () => setCart([]);
 
   return (
-    <CarritoContext.Provider value={{ cart, addToCart, emptyCart }}>
+    <CarritoContext.Provider value={{ cart, addToCart, removeFromCart, emptyCart }}>
       {children}
     </CarritoContext.Provider>
   );
