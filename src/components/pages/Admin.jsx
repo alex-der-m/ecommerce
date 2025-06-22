@@ -30,6 +30,31 @@ const Admin = () => {
     }
   };
 
+  const handleSubmit = async (data) => {
+    try {
+      if (editingProduct) {
+        await fetch(`https://6822bc57b342dce8004f33a3.mockapi.io/productos/${editingProduct.id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data),
+        });
+        Swal.fire('Actualizado', 'El curso fue actualizado correctamente.', 'success');
+      } else {
+        await fetch(`https://6822bc57b342dce8004f33a3.mockapi.io/productos`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data),
+        });
+        Swal.fire('Agregado', 'El curso fue agregado correctamente.', 'success');
+      }
+
+      setEditingProduct(null);
+      refreshProducts();
+    } catch (error) {
+      Swal.fire('Error', 'Ocurrió un error al guardar el curso.', 'error');
+    }
+  };
+
   return (
     <div className="container py-5">
       <div className="bg-light p-4 rounded shadow-sm">
@@ -39,26 +64,24 @@ const Admin = () => {
         </p>
 
         <div className="mt-5 mb-4">
-          <h4 className="mb-3">{editingProduct ? 'Editar producto' : 'Agregar nuevo producto'}</h4>
+          <h4 className="mb-3">{editingProduct ? 'Editar curso' : 'Agregar nuevo curso'}</h4>
           <ProductForm
-            productToEdit={editingProduct}
-            onFinish={() => {
-              setEditingProduct(null);
-              refreshProducts();
-            }}
+            initialData={editingProduct}
+            isEdit={!!editingProduct}
+            onSubmit={handleSubmit}
           />
         </div>
 
         <hr className="my-5" />
 
-        <h4>Productos actuales</h4>
+        <h4>Cursos actuales</h4>
         <div className="table-responsive">
           <table className="table table-bordered mt-3">
             <thead>
               <tr>
                 <th>Nombre</th>
                 <th>Precio</th>
-                <th>Descripción</th>
+                <th>Stock</th>
                 <th>Acciones</th>
               </tr>
             </thead>
@@ -68,7 +91,7 @@ const Admin = () => {
                   <tr key={prod.id}>
                     <td>{prod.name}</td>
                     <td>${prod.price}</td>
-                    <td>{prod.description}</td>
+                    <td>{prod.stock}</td>
                     <td>
                       <button
                         className="btn btn-sm btn-warning me-2"
@@ -88,7 +111,7 @@ const Admin = () => {
               ) : (
                 <tr>
                   <td colSpan="4" className="text-center text-muted">
-                    No hay productos cargados.
+                    No hay cursos cargados.
                   </td>
                 </tr>
               )}

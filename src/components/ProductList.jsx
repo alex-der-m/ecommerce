@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import styled from 'styled-components';
 import ProductCard from './Product';
 import { useProducts } from '../context/ProductsContext';
+import { Link } from 'react-router-dom';
 
 const ProductList = () => {
   const { products, loading, error } = useProducts();
@@ -61,7 +62,12 @@ const ProductList = () => {
             key={product.id}
             className="col-12 col-sm-6 col-md-4 col-lg-3 d-flex align-items-stretch mb-4"
           >
-            <ProductCard product={product} />
+            <Link
+              to={`/products/${product.id}`}
+              style={{ textDecoration: 'none', color: 'inherit', width: '100%' }}
+            >
+              <ProductCard product={product} />
+            </Link>
           </div>
         ))}
       </div>

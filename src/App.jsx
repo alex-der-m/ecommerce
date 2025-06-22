@@ -7,12 +7,14 @@ import About from './components/pages/About';
 import Contact from './components/pages/Contact';
 import Login from './components/pages/Login';
 import NotFound from './components/pages/NotFound';
+import ProductDetail from './components/ProductDetail';
 import Admin from './components/pages/Admin';
 import Cart from './components/Cart';
 import ProtectedRoute from './components/ProtectedRoute';
 
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Footer from './components/estaticos/Footer';
 
 const App = () => {
   return (
@@ -24,24 +26,13 @@ const App = () => {
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/login" element={<Login />} />
-        <Route
-          path="/admin"
-          element={
-            <ProtectedRoute adminOnly>
-              <Admin />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/cart"
-          element={
-            <ProtectedRoute>
-              <Cart />
-            </ProtectedRoute>
-          }
-        />
+        <Route path="/admin" element={<ProtectedRoute adminOnly><Admin /></ProtectedRoute>}/>
+        <Route path="/products/:id" element={<ProductDetail />} />
+        <Route path="/cart" element={<ProtectedRoute><Cart /></ProtectedRoute>}/>
         <Route path="*" element={<NotFound />} />
       </Routes>
+
+      <Footer />
 
       <ToastContainer position="bottom-right" autoClose={2000} />
     </>

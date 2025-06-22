@@ -13,7 +13,7 @@ export const CarritoProvider = ({ children }) => {
       if (existing) {
         return prevCart.map(item =>
           item.id === product.id
-            ? { ...item, quantity: item.quantity + 1 }
+            ? { ...item, quantity: (typeof item.quantity === 'number' ? item.quantity : 1) + 1 }
             : item
         );
       }

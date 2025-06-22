@@ -1,4 +1,5 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
+import users from '../data/users.json';
 
 const AuthContext = createContext();
 
@@ -12,27 +13,17 @@ export const AuthProvider = ({ children }) => {
     }
   }, []);
 
-const login = (username, password) => {
-  let userData;
+  const login = (email, password) => {
+    const userData = users.find(
+      (u) => u.email === email && u.password === password
+    );
 
-  if (username === 'admin' && password === 'admin') {
-    userData = {
-      username: 'admin',
-      role: 'admin',
-    };
-  } else if (username && password) {
-    userData = {
-      username,
-      role: 'user',
-    };
-  } else {
-    return null;
-  }
+    if (!userData) return null;
 
-  setUser(userData);
-  localStorage.setItem('user', JSON.stringify(userData));
-  return userData;
-};
+    setUser(userData);
+    localStorage.setItem('user', JSON.stringify(userData));
+    return userData;
+  };
 
   const logout = () => {
     localStorage.removeItem('user');

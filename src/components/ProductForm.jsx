@@ -1,136 +1,110 @@
 import React, { useState, useEffect } from 'react';
-import { useProducts } from '../context/ProductsContext';
 
-const ProductForm = ({ productToEdit = null, onFinish }) => {
-  const { addProduct, editProduct } = useProducts();
-
+const ProductForm = ({ onSubmit, initialData = {}, isEdit = false }) => {
   const [form, setForm] = useState({
     name: '',
     price: '',
-    description: '',
-    image: '',
+    stock: '',
+    video: ''
   });
 
-  const [errors, setErrors] = useState({});
-  const [successMessage, setSuccessMessage] = useState('');
-
   useEffect(() => {
-    if (productToEdit) {
+    if (isEdit && initialData) {
       setForm({
-        name: productToEdit.name || '',
-        price: productToEdit.price || '',
-        description: productToEdit.description || '',
-        image: productToEdit.image || '',
+        name: initialData.name || '',
+        price: initialData.price || '',
+        stock: initialData.stock || '',
+        video: initialData.video || ''
       });
-    } else {
-      setForm({ name: '', price: '', description: '', image: '' });
-      setErrors({});
-      setSuccessMessage('');
     }
-  }, [productToEdit]);
-
-  const validate = () => {
-    const newErrors = {};
-    if (!form.name.trim()) newErrors.name = 'El nombre es obligatorio.';
-    if (!form.price || isNaN(form.price) || Number(form.price) <= 0)
-      newErrors.price = 'El precio debe ser un número mayor a 0.';
-    if (!form.description || form.description.length < 10)
-      newErrors.description = 'La descripción debe tener al menos 10 caracteres.';
-    if (!form.image.trim()) newErrors.image = 'La URL de imagen es obligatoria.';
-    return newErrors;
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const validationErrors = validate();
-    setErrors(validationErrors);
-    if (Object.keys(validationErrors).length > 0) return;
-
-    try {
-      if (productToEdit) {
-        await editProduct(productToEdit.id, form);
-        setSuccessMessage('Producto actualizado correctamente.');
-      } else {
-        await addProduct(form);
-        setSuccessMessage('Producto agregado correctamente.');
-        setForm({ name: '', price: '', description: '', image: '' });
-      }
-
-      setTimeout(() => {
-        setSuccessMessage('');
-        if (onFinish) onFinish();
-      }, 1500);
-    } catch (error) {
-      console.error('Error al guardar producto:', error);
-      const message =
-        typeof error === 'string'
-          ? error
-          : error?.message || 'Ocurrió un error al guardar el producto.';
-      setErrors({ general: message });
-    }
-  };
+  }, [initialData, isEdit]);
 
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setForm((prev) => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    if (!form.name || !form.price || !form.stock || !form.video) {
+      alert('Todos los campos son obligatorios.');
+      return;
+    }
+
+    const parsedProduct = {
+      ...form,
+      price: parseFloat(form.price),
+      stock: parseInt(form.stock)
+    };
+
+    onSubmit(parsedProduct);
+
+    if (!isEdit) {
+      setForm({ name: '', price: '', stock: '', video: '' });
+    }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white p-4 shadow rounded">
-      {errors.general && <div className="alert alert-danger">{errors.general}</div>}
-      {successMessage && <div className="alert alert-success">{successMessage}</div>}
+    <form onSubmit={handleSubmit} className="p-3 border rounded shadow-sm bg-light">
+      <h4 className="mb-3">{isEdit ? 'Editar Curso' : 'Agregar Nuevo Curso'}</h4>
 
       <div className="mb-3">
-        <label className="form-label">Nombre</label>
+        <label htmlFor="name" className="form-label">Nombre del Curso</label>
         <input
           type="text"
+          className="form-control"
           name="name"
-          className={`form-control ${errors.name ? 'is-invalid' : ''}`}
           value={form.name}
           onChange={handleChange}
+          required
         />
-        {errors.name && <div className="invalid-feedback">{errors.name}</div>}
       </div>
 
       <div className="mb-3">
-        <label className="form-label">Precio</label>
+        <label htmlFor="price" className="form-label">Precio (USD)</label>
         <input
           type="number"
+          className="form-control"
           name="price"
-          className={`form-control ${errors.price ? 'is-invalid' : ''}`}
           value={form.price}
           onChange={handleChange}
-          min="0.01"
-          step="0.01"
+          required
         />
-        {errors.price && <div className="invalid-feedback">{errors.price}</div>}
       </div>
 
       <div className="mb-3">
-        <label className="form-label">Descripción</label>
-        <textarea
-          name="description"
-          className={`form-control ${errors.description ? 'is-invalid' : ''}`}
-          value={form.description}
+        <label htmlFor="stock" className="form-label">Stock</label>
+        <input
+          type="number"
+          className="form-control"
+          name="stock"
+          value={form.stock}
           onChange={handleChange}
-          rows={3}
+          required
         />
-        {errors.description && <div className="invalid-feedback">{errors.description}</div>}
       </div>
 
       <div className="mb-3">
-        <label className="form-label">URL de Imagen</label>
+        <label htmlFor="video" className="form-label">URL del Video (YouTube embed)</label>
         <input
           type="text"
-          name="image"
-          className={`form-control ${errors.image ? 'is-invalid' : ''}`}
-          value={form.image}
+          className="form-control"
+          name="video"
+          value={form.video}
           onChange={handleChange}
+          required
         />
-        {errors.image && <div className="invalid-feedback">{errors.image}</div>}
+        <div className="form-text">
+          Ejemplo: https://www.youtube.com/embed/ID_DEL_VIDEO
+        </div>
       </div>
 
-      <button type="submit" className="btn btn-success">
-        {productToEdit ? 'Guardar cambios' : 'Agregar producto'}
+      <button type="submit" className="btn btn-primary">
+        {isEdit ? 'Guardar Cambios' : 'Agregar Curso'}
       </button>
     </form>
   );
