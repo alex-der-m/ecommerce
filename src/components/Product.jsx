@@ -13,12 +13,12 @@ const getYoutubeThumbnail = (videoUrl) => {
   }
 };
 
-const ProductCard = ({ product }) => {
+const ProductCard = ({ product, isDimmed, isActive }) => {
   const { addToCart, cart } = useCarrito();
 
   const handleAddToCart = (e) => {
-    e.stopPropagation(); // ✅ evita la navegación al hacer clic en el botón
-    e.preventDefault();  // ✅ previene comportamiento del <Link>
+    e.stopPropagation();
+    e.preventDefault();
 
     const existingProduct = cart.find(p => p.id === product.id);
     addToCart(product);
@@ -36,7 +36,18 @@ const ProductCard = ({ product }) => {
   const thumbnail = getYoutubeThumbnail(product.video);
 
   return (
-    <div className="card mb-3 shadow-sm" style={{ minHeight: '100%' }}>
+    <div
+      className="card mb-3 shadow-sm"
+      style={{
+        minHeight: '100%',
+        transition: 'all 0.3s ease',
+        filter: isDimmed ? 'blur(2px) brightness(0.7)' : 'none',
+        boxShadow: isActive
+          ? '0 8px 20px rgba(0,0,0,0.3)'
+          : '0 2px 8px rgba(0,0,0,0.1)',
+        cursor: 'pointer',
+      }}
+    >
       {thumbnail ? (
         <img
           src={thumbnail}

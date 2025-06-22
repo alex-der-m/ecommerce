@@ -19,7 +19,7 @@ const Footer = () => {
             <ul className="list-unstyled">
               <li><NavLink to="/about" className="text-white text-decoration-none">Nosotros</NavLink></li>
               <li><NavLink to="/contact" className="text-white text-decoration-none">Contacto</NavLink></li>
-              <li><NavLink to="/" className="text-white text-decoration-none">Términos y Condiciones</NavLink></li>
+              <li><NavLink to="/terms" className="text-white text-decoration-none">Términos y Condiciones</NavLink></li>
             </ul>
           </div>
 

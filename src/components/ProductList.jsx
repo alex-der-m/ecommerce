@@ -8,6 +8,7 @@ const ProductList = () => {
   const { products, loading, error } = useProducts();
   const [search, setSearch] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
+  const [hoveredId, setHoveredId] = useState(null); // hover local
   const productsPerPage = 8;
 
   const filteredProducts = useMemo(() => {
@@ -61,12 +62,18 @@ const ProductList = () => {
           <div
             key={product.id}
             className="col-12 col-sm-6 col-md-4 col-lg-3 d-flex align-items-stretch mb-4"
+            onMouseEnter={() => setHoveredId(product.id)}
+            onMouseLeave={() => setHoveredId(null)}
           >
             <Link
               to={`/products/${product.id}`}
               style={{ textDecoration: 'none', color: 'inherit', width: '100%' }}
             >
-              <ProductCard product={product} />
+              <ProductCard
+                product={product}
+                isDimmed={hoveredId !== null && hoveredId !== product.id}
+                isActive={hoveredId === product.id}
+              />
             </Link>
           </div>
         ))}
