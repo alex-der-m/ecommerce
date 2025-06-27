@@ -25,6 +25,8 @@ import { lightTheme, darkTheme } from './theme';
 import styled from 'styled-components';
 import TermsAndConditions from './components/pages/TermsAndConditions';
 
+import Chatbot from './components/estaticos/Chatbot';
+
 const ContentWrapper = styled.div`
   transition: filter 0.3s ease, background-color 0.3s ease, color 0.3s ease;
   filter: ${({ blur }) => (blur ? 'blur(4px) brightness(0.7)' : 'none')};
@@ -65,6 +67,7 @@ const App = () => {
     <ThemeProvider>
       <HoverProvider>
         <AppContent />
+          <Chatbot />
         <ToastContainer position="bottom-right" autoClose={2000} />
       </HoverProvider>
     </ThemeProvider>
