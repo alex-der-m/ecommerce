@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-const ProductForm = ({ onSubmit, initialData = {}, isEdit = false }) => {
+const ProductForm = ({ onSubmit, initialData = {}, isEdit = false, onCancel }) => {
   const [form, setForm] = useState({
     name: '',
     price: '',
@@ -103,9 +103,17 @@ const ProductForm = ({ onSubmit, initialData = {}, isEdit = false }) => {
         </div>
       </div>
 
-      <button type="submit" className="btn btn-primary">
-        {isEdit ? 'Guardar Cambios' : 'Agregar Curso'}
-      </button>
+      <div className="d-flex justify-content-between">
+        <button type="submit" className="btn btn-primary">
+          {isEdit ? 'Guardar Cambios' : 'Agregar Curso'}
+        </button>
+
+        {isEdit && (
+          <button type="button" className="btn btn-secondary" onClick={onCancel}>
+            Cancelar
+          </button>
+        )}
+      </div>
     </form>
   );
 };

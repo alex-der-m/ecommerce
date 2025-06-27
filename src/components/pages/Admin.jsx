@@ -6,6 +6,7 @@ import Swal from 'sweetalert2';
 const Admin = () => {
   const { products, deleteProduct, refreshProducts } = useProducts();
   const [editingProduct, setEditingProduct] = useState(null);
+  const [accordionOpen, setAccordionOpen] = useState(true);
 
   const handleDelete = async (id) => {
     const result = await Swal.fire({
@@ -32,21 +33,20 @@ const Admin = () => {
 
   const handleSubmit = async (data) => {
     try {
-      if (editingProduct) {
-        await fetch(`https://6822bc57b342dce8004f33a3.mockapi.io/productos/${editingProduct.id}`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(data),
-        });
-        Swal.fire('Actualizado', 'El curso fue actualizado correctamente.', 'success');
-      } else {
-        await fetch(`https://6822bc57b342dce8004f33a3.mockapi.io/productos`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(data),
-        });
-        Swal.fire('Agregado', 'El curso fue agregado correctamente.', 'success');
-      }
+      const method = editingProduct ? 'PUT' : 'POST';
+      const url = `https://6822bc57b342dce8004f33a3.mockapi.io/productos${editingProduct ? `/${editingProduct.id}` : ''}`;
+
+      await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+
+      Swal.fire(
+        editingProduct ? 'Actualizado' : 'Agregado',
+        `El curso fue ${editingProduct ? 'actualizado' : 'agregado'} correctamente.`,
+        'success'
+      );
 
       setEditingProduct(null);
       refreshProducts();
@@ -63,13 +63,28 @@ const Admin = () => {
           Aquí podrás gestionar los cursos, revisar pedidos o actualizar información del sitio.
         </p>
 
-        <div className="mt-5 mb-4">
-          <h4 className="mb-3">{editingProduct ? 'Editar curso' : 'Agregar nuevo curso'}</h4>
-          <ProductForm
-            initialData={editingProduct}
-            isEdit={!!editingProduct}
-            onSubmit={handleSubmit}
-          />
+        {/* Acordeón para mostrar/ocultar formulario */}
+        <div className="accordion mt-5" id="adminAccordion">
+          <div className="accordion-item">
+            <h2 className="accordion-header">
+              <button
+                className={`accordion-button ${accordionOpen ? '' : 'collapsed'}`}
+                type="button"
+                onClick={() => setAccordionOpen(!accordionOpen)}
+              >
+                {editingProduct ? 'Editar curso' : 'Agregar nuevo curso'}
+              </button>
+            </h2>
+            <div className={`accordion-collapse collapse ${accordionOpen ? 'show' : ''}`}>
+              <div className="accordion-body">
+                <ProductForm
+                  initialData={editingProduct}
+                  isEdit={!!editingProduct}
+                  onSubmit={handleSubmit}
+                />
+              </div>
+            </div>
+          </div>
         </div>
 
         <hr className="my-5" />
@@ -95,7 +110,10 @@ const Admin = () => {
                     <td>
                       <button
                         className="btn btn-sm btn-warning me-2"
-                        onClick={() => setEditingProduct(prod)}
+                        onClick={() => {
+                          setEditingProduct(prod);
+                          setAccordionOpen(true);
+                        }}
                       >
                         Editar
                       </button>
@@ -127,4 +145,4 @@ const Admin = () => {
   );
 };
 
-export default Admin;
+export default Admin; 
