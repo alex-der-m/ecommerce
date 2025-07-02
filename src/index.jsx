@@ -4,21 +4,27 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals.js';
 import { BrowserRouter } from 'react-router-dom';
-import { CarritoProvider } from './context/CarritoContext';
 import { AuthProvider } from './context/AuthContext';
 import { ProductsProvider } from './context/ProductsContext.jsx';
+import { CarritoProvider } from './context/CarritoContext';
+import { HoverProvider } from './context/HoverContext';
+import { ThemeProvider } from './context/ThemeContext';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
     <BrowserRouter>
-      <AuthProvider>
-        <CarritoProvider>
+      <ThemeProvider>
+        <AuthProvider>
           <ProductsProvider>
-            <App />
-          </ProductsProvider>       
-        </CarritoProvider>
-      </AuthProvider>
+            <CarritoProvider>
+              <HoverProvider>
+                <App />
+              </HoverProvider>
+            </CarritoProvider>
+          </ProductsProvider>
+        </AuthProvider>
+      </ThemeProvider>
     </BrowserRouter>
   </React.StrictMode>
 );

@@ -55,6 +55,25 @@ export const ProductsProvider = ({ children }) => {
     }
   };
 
+  const decrementStock = async (id) => {
+    const product = products.find((p) => p.id === id);
+    if (!product) throw new Error('Producto no encontrado');
+    if (product.stock <= 0) throw new Error('Stock insuficiente');
+
+    const updatedProduct = { ...product, stock: product.stock - 1 };
+    const res = await axios.put(`${API_URL}/${id}`, updatedProduct);
+    setProducts((prev) => prev.map((p) => (p.id === id ? res.data : p)));
+  };
+
+  const incrementStock = async (id) => {
+    const product = products.find((p) => p.id === id);
+    if (!product) throw new Error('Producto no encontrado');
+
+    const updatedProduct = { ...product, stock: product.stock + 1 };
+    const res = await axios.put(`${API_URL}/${id}`, updatedProduct);
+    setProducts((prev) => prev.map((p) => (p.id === id ? res.data : p)));
+  };
+
   return (
     <ProductsContext.Provider
       value={{
@@ -65,9 +84,13 @@ export const ProductsProvider = ({ children }) => {
         editProduct,
         deleteProduct,
         refreshProducts,
+        decrementStock,
+        incrementStock,
       }}
     >
       {children}
     </ProductsContext.Provider>
   );
 };
+
+console.log("✅ ProductsContext cargado correctamente.");

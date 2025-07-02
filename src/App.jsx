@@ -12,6 +12,9 @@ import NotFound from './components/pages/NotFound';
 import ProductDetail from './components/ProductDetail';
 import Admin from './components/pages/Admin';
 import Cart from './components/Cart';
+import TermsAndConditions from './components/pages/TermsAndConditions';
+import MyCourses from './components/pages/MyCourses';
+
 import ProtectedRoute from './components/ProtectedRoute';
 
 import { ToastContainer } from 'react-toastify';
@@ -20,12 +23,14 @@ import 'react-toastify/dist/ReactToastify.css';
 import { HoverProvider, useHover } from './context/HoverContext';
 import { ThemeProvider as StyledThemeProvider } from 'styled-components';
 import { ThemeProvider, useTheme } from './context/ThemeContext';
+import { AuthProvider } from './context/AuthContext';
+import { ProductsProvider } from './context/ProductsContext';
+import { CarritoProvider } from './context/CarritoContext';
+
 import { lightTheme, darkTheme } from './theme';
+import Chatbot from './components/estaticos/Chatbot';
 
 import styled from 'styled-components';
-import TermsAndConditions from './components/pages/TermsAndConditions';
-
-import Chatbot from './components/estaticos/Chatbot';
 
 const ContentWrapper = styled.div`
   transition: filter 0.3s ease, background-color 0.3s ease, color 0.3s ease;
@@ -53,6 +58,7 @@ const AppContent = () => {
           <Route path="/admin" element={<ProtectedRoute adminOnly><Admin /></ProtectedRoute>} />
           <Route path="/products/:id" element={<ProductDetail />} />
           <Route path="/cart" element={<ProtectedRoute><Cart /></ProtectedRoute>} />
+          <Route path="/my-courses" element={<ProtectedRoute><MyCourses /></ProtectedRoute>} />
           <Route path="/terms" element={<TermsAndConditions />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
@@ -65,11 +71,17 @@ const AppContent = () => {
 const App = () => {
   return (
     <ThemeProvider>
-      <HoverProvider>
-        <AppContent />
-          <Chatbot />
-        <ToastContainer position="bottom-right" autoClose={2000} />
-      </HoverProvider>
+      <AuthProvider>
+        <ProductsProvider>
+          <CarritoProvider>
+            <HoverProvider>
+              <AppContent />
+              <Chatbot />
+              <ToastContainer position="bottom-right" autoClose={2000} />
+            </HoverProvider>
+          </CarritoProvider>
+        </ProductsProvider>
+      </AuthProvider>
     </ThemeProvider>
   );
 };

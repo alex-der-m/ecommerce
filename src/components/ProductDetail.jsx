@@ -1,31 +1,15 @@
 import { useParams } from 'react-router-dom';
-import { useEffect, useState } from 'react';
 import { useCarrito } from '../context/CarritoContext';
+import { useProducts } from '../context/ProductsContext';
 import { toast } from 'react-toastify';
 import { FaCartPlus } from 'react-icons/fa';
 
 const ProductDetail = () => {
   const { id } = useParams();
-  const [product, setProduct] = useState(null);
-  const [error, setError] = useState(null);
+  const { products } = useProducts();
+  const product = products.find((p) => p.id === id);
 
   const { addToCart, cart } = useCarrito();
-
-  useEffect(() => {
-    fetch(`https://6822bc57b342dce8004f33a3.mockapi.io/productos/${id}`)
-      .then((res) => {
-        if (!res.ok) throw new Error('Producto no encontrado');
-        return res.json();
-      })
-      .then((data) => {
-        setProduct(data);
-        setError(null);
-      })
-      .catch((err) => {
-        console.error(err);
-        setError('No se pudo cargar el producto.');
-      });
-  }, [id]);
 
   const handleAddToCart = () => {
     const existing = cart.find((item) => item.id === product.id);
@@ -41,7 +25,6 @@ const ProductDetail = () => {
     }
   };
 
-  if (error) return <p className="text-center text-danger mt-5">{error}</p>;
   if (!product) return <p className="text-center mt-5">Cargando producto...</p>;
 
   return (

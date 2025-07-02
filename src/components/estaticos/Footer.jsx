@@ -1,23 +1,28 @@
+// src/components/estaticos/Footer.jsx
 import React from 'react';
-import styled, { useTheme as useStyledTheme } from 'styled-components';
+import styled from 'styled-components';
 
 const FooterWrapper = styled.footer`
-  background-color: ${({ theme }) => theme.footerBg};
-  color: ${({ theme }) => theme.footerText};
-  border-top: 2px solid ${({ theme }) => theme.footerBorder};
-  text-align: center;
+  background-color: #222; /* Fondo oscuro */
+  color: white;
   padding: 1rem 0;
-  transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+  font-size: 0.9rem;
+  text-align: center;
+  margin-top: auto; /* Para pegar al fondo si usas flex en App */
+`;
+
+const Container = styled.div`
+  max-width: 1140px;
+  margin: 0 auto;
+  padding: 0 15px;
 `;
 
 const Footer = () => {
-  const styledTheme = useStyledTheme();
-
   return (
-    <FooterWrapper theme={styledTheme}>
-      <div className="container">
-        <small>© {new Date().getFullYear()} Aprende360. Todos los derechos reservados.</small>
-      </div>
+    <FooterWrapper>
+      <Container>
+        © 2025 Aprende 360 - Todos los derechos reservados.
+      </Container>
     </FooterWrapper>
   );
 };

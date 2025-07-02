@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useNavigate, NavLink } from 'react-router-dom';
+import React from 'react';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useCarrito } from '../../context/CarritoContext';
 import { useTheme as useAppTheme } from '../../context/ThemeContext';
@@ -8,156 +8,143 @@ import { MdDarkMode, MdLightMode } from 'react-icons/md';
 import { toast } from 'react-toastify';
 import styled from 'styled-components';
 
-const HeaderWrapper = styled.header`
+const Bar = styled.header`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1.5rem;
   background-color: ${({ theme }) => theme.headerBg};
-  color: ${({ theme }) => theme.headerText};
-  border-bottom: 2px solid ${({ theme }) => theme.headerBorder};
-  transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+  border-bottom: 1px solid ${({ theme }) => theme.headerBorder};
+  position: sticky;
+  top: 0;
+  z-index: 1000;
 `;
 
-const Title = styled.h3`
-  font-family: Montserrat, sans-serif;
+const LeftSection = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+`;
+
+const Brand = styled.div`
+  font-size: 1.5rem;
+  font-weight: bold;
   color: ${({ theme }) => theme.headerText};
-  font-style: italic;
 
-  span.bold {
-    font-family: 'Courier New', monospace;
-    font-weight: bold;
-  }
-
-  span.sub {
-    font-family: Verdana, sans-serif;
-    font-size: 1.3rem;
-    color: #B5B2B2;
+  span.logo-style {
+    color: ${({ theme }) => theme.logoAccent};
   }
 `;
 
-const NavButton = styled.button`
-  border: none;
-  background: transparent;
+const Greeting = styled.div`
+  font-size: 1rem;
   color: ${({ theme }) => theme.headerText};
-  font-size: 1.2rem;
-  margin-left: 0.5rem;
+  font-weight: 500;
+`;
+
+const NavMenu = styled.nav`
+  display: flex;
+  gap: 1rem;
+  a {
+    color: ${({ theme }) => theme.headerText};
+    font-weight: 500;
+    &.active {
+      text-decoration: underline;
+    }
+  }
+`;
+
+const UserControls = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  button, .cart-icon {
+    background: none;
+    border: none;
+    color: ${({ theme }) => theme.headerText};
+    font-size: 1.1rem;
+    cursor: pointer;
+    position: relative;
+  }
+
+  .badge {
+    position: absolute;
+    top: -4px;
+    right: -8px;
+    background: ${({ theme }) => theme.badgeBg};
+    color: ${({ theme }) => theme.badgeText};
+    border-radius: 50%;
+    padding: 0.1rem 0.4rem;
+    font-size: 0.7rem;
+  }
 `;
 
 const Header = () => {
   const { user, logout } = useAuth();
   const { cart } = useCarrito();
   const { theme: appTheme, toggleTheme } = useAppTheme();
+  const totalItems = cart.reduce((a, c) => a + c.quantity, 0);
+
   const navigate = useNavigate();
-  const [isNavCollapsed, setIsNavCollapsed] = useState(true);
 
   const handleAuth = () => {
     if (user) {
       logout();
       toast.info('Sesión cerrada correctamente 👋');
-      navigate('/');
+      navigate('/login');
     } else {
       navigate('/login');
     }
   };
 
-  const handleNavCollapse = () => setIsNavCollapsed(!isNavCollapsed);
-
-  const getNavLinkClass = ({ isActive }) =>
-    'nav-link text-white' + (isActive ? ' fw-bold border-bottom border-light' : '');
-
-  const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+  const getGreetingName = () => {
+    if (!user) return '';
+    if (user.role === 'admin') return 'admin';
+    const nameFromEmail = user.email.split('@')[0];
+    return nameFromEmail;
+  };
 
   return (
-    <HeaderWrapper className="sticky-top shadow-sm">
-      <div className="container py-3">
-        <div className="d-flex justify-content-between align-items-center flex-wrap mb-3">
-          <Title className="fw-bold mb-2 mb-sm-0">
-            Aprende <span className="bold">360</span>{' '}
-            <span className="sub">Tu plataforma de cursos online</span>
-          </Title>
+    <Bar>
+      <LeftSection>
+        <Brand>
+          Aprende <span className="logo-style">360</span>
+        </Brand>
+        {user && <Greeting>Hola, {getGreetingName()}</Greeting>}
+      </LeftSection>
 
-          <div className="d-none d-sm-flex align-items-center gap-2">
-            {user && (
-              <>
-                <small>
-                  👋 Hola, <strong>{user.username}</strong>
-                </small>
-                <NavButton onClick={handleAuth} title="Cerrar sesión">
-                  <FaSignOutAlt />
-                </NavButton>
-              </>
-            )}
+      <NavMenu>
+        <NavLink to="/" className={({isActive}) => isActive ? 'active' : ''}>Inicio</NavLink>
+        <NavLink to="/about" className={({isActive}) => isActive ? 'active' : ''}>Nosotros</NavLink>
+        <NavLink to="/contact" className={({isActive}) => isActive ? 'active' : ''}>Contacto</NavLink>
+        {user && (
+          <NavLink to="/my-courses" className={({isActive}) => isActive ? 'active' : ''}>Mis Cursos</NavLink>
+        )}
+      </NavMenu>
 
-            {!user && (
-              <NavButton onClick={handleAuth} title="Iniciar sesión">
-                <FaSignInAlt />
-              </NavButton>
-            )}
-
-            <NavButton onClick={toggleTheme} title="Cambiar tema">
-              {appTheme === 'dark' ? <MdLightMode /> : <MdDarkMode />}
-            </NavButton>
-          </div>
-        </div>
-
-        <nav className="navbar navbar-expand-sm p-0">
-          <button
-            className="navbar-toggler border-light"
-            type="button"
-            aria-controls="navbarNav"
-            aria-expanded={!isNavCollapsed}
-            aria-label="Toggle navigation"
-            onClick={handleNavCollapse}
-          >
-            <span className="navbar-toggler-icon" />
+      <UserControls>
+        {user && (
+          <>
+            <button onClick={handleAuth} title="Cerrar sesión" aria-label="Cerrar sesión">
+              <FaSignOutAlt />
+            </button>
+            <NavLink to="/cart" className="cart-icon" title="Carrito">
+              <FaShoppingCart />
+              {totalItems > 0 && <span className="badge">{totalItems}</span>}
+            </NavLink>
+          </>
+        )}
+        {!user && (
+          <button onClick={handleAuth} title="Iniciar sesión" aria-label="Iniciar sesión">
+            <FaSignInAlt />
           </button>
-
-          <div
-            className={`${isNavCollapsed ? 'collapse' : ''} navbar-collapse`}
-            id="navbarNav"
-          >
-            <ul className="navbar-nav me-auto mb-2 mb-sm-0">
-              <li className="nav-item">
-                <NavLink to="/" className={getNavLinkClass}>
-                  Inicio
-                </NavLink>
-              </li>
-              <li className="nav-item">
-                <NavLink to="/about" className={getNavLinkClass}>
-                  Nosotros
-                </NavLink>
-              </li>
-              <li className="nav-item">
-                <NavLink to="/contact" className={getNavLinkClass}>
-                  Contacto
-                </NavLink>
-              </li>
-              {user?.role === 'admin' && (
-                <li className="nav-item">
-                  <NavLink to="/admin" className={getNavLinkClass}>
-                    Admin
-                  </NavLink>
-                </li>
-              )}
-            </ul>
-
-            <div className="d-flex align-items-center mt-2 mt-sm-0">
-              {user && (
-                <NavLink
-                  to="/cart"
-                  className="position-relative me-3 text-white fs-5"
-                  onClick={() => setIsNavCollapsed(true)}
-                >
-                  <FaShoppingCart />
-                  {totalItems > 0 && (
-                    <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                      {totalItems}
-                    </span>
-                  )}
-                </NavLink>
-              )}
-            </div>
-          </div>
-        </nav>
-      </div>
-    </HeaderWrapper>
+        )}
+        <button onClick={toggleTheme} title="Cambiar tema" aria-label="Cambiar tema">
+          {appTheme === 'dark' ? <MdLightMode /> : <MdDarkMode />}
+        </button>
+      </UserControls>
+    </Bar>
   );
 };
 
